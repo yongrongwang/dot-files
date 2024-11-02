@@ -1,0 +1,14 @@
+#!/bin/sh
+quit="n"
+while [ "$quit" != "y" ]; do
+    lsblk
+    read -p "Device: " dev
+    if [ ! -b "/dev/$dev" ]; then
+        echo "/dev/$dev does not exist."
+    elif [ -n "$(lsblk -n "/dev/$dev" -o MOUNTPOINT)" ]; then
+        udisksctl unmount -b "/dev/$dev"
+    else
+        udisksctl mount -b "/dev/$dev"
+    fi
+    read -p "Quit? (y/n) " quit
+done

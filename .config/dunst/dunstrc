@@ -1,0 +1,8 @@
+[global]
+    offset = (0, 0)
+    font = Noto Sans 11
+[urgency_low]
+    foreground = "#ffffff"
+[urgency_normal]
+    background = "#333333"
+# vim: ft=cfg

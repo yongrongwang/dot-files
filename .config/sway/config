@@ -1,0 +1,119 @@
+set $mod Mod4
+set $left h
+set $down j
+set $up k
+set $right l
+set $term foot
+set $browser qutebrowser
+set $menu bemenu-run
+set $jmenu j4-dmenu-desktop --dmenu='bemenu -l "50 down"' --term='foot'
+set $cmenu cliphist list | bemenu -l "50 down" | cliphist decode | wl-copy
+set $locker swaylock -f -c 000000
+output * bg ~/.local/share/wallpapers/1.png fill
+input type:touchpad {
+    dwt enabled
+    tap enabled
+    natural_scroll enabled
+    middle_emulation enabled
+    click_method clickfinger
+}
+input type:keyboard {
+    xkb_options caps:swapescape,ctrl:swap_lalt_lctl_lwin
+    repeat_delay 200
+    repeat_rate 50
+}
+bindsym $mod+w exec $browser
+bindsym $mod+t exec $term
+bindsym $mod+f exec $term -e nnn
+bindsym $mod+n exec $term -e impala
+bindsym $mod+b exec $term -e bluetui
+bindsym $mod+Shift+q kill
+bindsym $mod+Return exec pkill bemenu-run || $menu
+bindsym $mod+Shift+Return exec pkill bemenu || $jmenu
+bindsym $mod+Ctrl+Return exec pkill bemenu || $cmenu
+bindsym $mod+Shift+BackSpace exec pkill bemenu || power.sh
+floating_modifier $mod normal
+bindsym $mod+Shift+c reload
+bindsym $mod+$left focus left
+bindsym $mod+$down focus down
+bindsym $mod+$up focus up
+bindsym $mod+$right focus right
+bindsym $mod+Shift+$left move left
+bindsym $mod+Shift+$down move down
+bindsym $mod+Shift+$up move up
+bindsym $mod+Shift+$right move right
+bindsym $mod+g workspace prev
+bindsym $mod+semicolon workspace next
+bindsym $mod+1 workspace number 1
+bindsym $mod+2 workspace number 2
+bindsym $mod+3 workspace number 3
+bindsym $mod+4 workspace number 4
+bindsym $mod+5 workspace number 5
+bindsym $mod+6 workspace number 6
+bindsym $mod+7 workspace number 7
+bindsym $mod+8 workspace number 8
+bindsym $mod+9 workspace number 9
+bindsym $mod+0 workspace number 10
+bindsym $mod+Shift+1 move container to workspace number 1
+bindsym $mod+Shift+2 move container to workspace number 2
+bindsym $mod+Shift+3 move container to workspace number 3
+bindsym $mod+Shift+4 move container to workspace number 4
+bindsym $mod+Shift+5 move container to workspace number 5
+bindsym $mod+Shift+6 move container to workspace number 6
+bindsym $mod+Shift+7 move container to workspace number 7
+bindsym $mod+Shift+8 move container to workspace number 8
+bindsym $mod+Shift+9 move container to workspace number 9
+bindsym $mod+Shift+0 move container to workspace number 10
+bindsym $mod+s splith
+bindsym $mod+v splitv
+bindsym $mod+Shift+f fullscreen
+bindsym $mod+Shift+v layout stacking
+bindsym $mod+Shift+t layout tabbed
+bindsym $mod+Shift+s layout toggle split
+bindsym $mod+Shift+space floating toggle
+bindsym $mod+Shift+minus move scratchpad
+bindsym $mod+space focus mode_toggle
+bindsym $mod+minus scratchpad show
+bindsym $mod+p focus parent
+mode "resize" {
+    bindsym $left resize shrink width 10px
+    bindsym $down resize grow height 10px
+    bindsym $up resize shrink height 10px
+    bindsym $right resize grow width 10px
+    bindsym Escape mode "default"
+}
+bindsym $mod+r mode "resize"
+bindsym --locked XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle && volume.sh
+bindsym --locked XF86AudioLowerVolume exec pactl set-sink-mute @DEFAULT_SINK@ 0 && pactl set-sink-volume @DEFAULT_SINK@ -5% && volume.sh
+bindsym --locked XF86AudioRaiseVolume exec pactl set-sink-mute @DEFAULT_SINK@ 0 && pactl set-sink-volume @DEFAULT_SINK@ +5% && volume.sh
+bindsym --locked XF86MonBrightnessDown exec brightnessctl set 5%- && brightness.sh
+bindsym --locked XF86MonBrightnessUp exec brightnessctl set 5%+ && brightness.sh
+bindsym --locked XF86AudioPlay exec playerctl play-pause
+bindsym Print exec grim -g "$(slurp)"
+bindsym Ctrl+Print exec pkill wf-recorder || wf-recorder -g "$(slurp)" -f "$(date +'%Y%m%d_%Hh%Mm%Ss_wf-recorder.mp4')"
+bar {
+    font pango:Noto Sans 11
+    position top
+    height 19
+    mode hide
+    status_command while status.sh; do sleep 1; done
+    colors {
+        statusline #ffffff
+        background #323232
+        focused_workspace #101010 #202020 #ffffff
+    }
+    tray {
+        tray_output none
+    }
+}
+font pango:Noto Sans 0.001
+titlebar_border_thickness 0
+titlebar_padding 0
+default_border pixel 1
+default_floating_border pixel 1
+client.focused #101010 #202020 #ffffff #101010 #202020
+client.focused_inactive #101010 #202020 #ffffff #101010 #202020
+exec swayidle -w timeout 600 '$locker' timeout 900 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' before-sleep '$locker'
+exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+exec wl-paste --watch cliphist store
+include /etc/sway/config.d/*

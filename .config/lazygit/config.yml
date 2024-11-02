@@ -1,0 +1,12 @@
+gui:
+  theme:
+    selectedLineBgColor:
+      - black
+  nerdFontsVersion: 3
+  statusPanelView: allBranchesLog
+git:
+  paging:
+    pager: diff-so-fancy
+disableStartupPopups: true
+notARepository: skip
+promptToReturnFromSubprocess: false
