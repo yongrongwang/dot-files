@@ -1,0 +1,6 @@
+#!/bin/sh
+
+mute=$(pactl get-sink-mute @DEFAULT_SINK@)
+volume=$(pactl get-sink-volume @DEFAULT_SINK@ | awk '{print $5}')
+[[ $mute == *"yes" ]] && echo "V:-" && exit
+echo "V:$volume"
