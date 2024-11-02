@@ -1,0 +1,4 @@
+[Default Applications]
+video/mp4=mpv.desktop;
+image/png=imv.desktop;
+application/pdf=org.pwmt.zathura.desktop;
