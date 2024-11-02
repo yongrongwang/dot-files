@@ -1,0 +1,10 @@
+[general]
+import = [ "~/.config/alacritty/monokai.toml" ]
+[env]
+TERM = "alacritty"
+[window]
+startup_mode = "Maximized"
+option_as_alt = "Both"
+[font]
+normal = { family = "SauceCodePro Nerd Font", style = "Regular" }
+size = 13
