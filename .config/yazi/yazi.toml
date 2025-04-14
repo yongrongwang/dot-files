@@ -49,13 +49,19 @@ reveal = [
 	{ run = '''clear; exiftool "$1"; echo "Press enter to exit"; read _''', block = true, desc = "Show EXIF", for = "unix" },
 ]
 extract = [
-	{ run = 'ya pub extract --list "$@"', desc = "Extract here", for = "unix" },
-	{ run = 'ya pub extract --list %*',   desc = "Extract here", for = "windows" },
+	{ run = 'unzip "$@"', desc = "Extract here", for = "unix" },
+	{ run = 'unzip %*',   desc = "Extract here", for = "windows" },
 ]
 play = [
 	{ run = 'mpv --force-window "$@"', orphan = true, for = "unix" },
 	{ run = 'mpv --force-window %*', orphan = true, for = "windows" },
 	{ run = '''mediainfo "$1"; echo "Press enter to exit"; read _''', block = true, desc = "Show media info", for = "unix" },
+]
+open_pdf = [
+    { run = 'zathura "$@"', orphan = true, desc = "Open", for = "unix" },
+]
+open_image = [
+    { run = 'imv "$@"', orphan = true, desc = "Open", for = "unix" },
 ]
 
 [open]
@@ -65,7 +71,7 @@ rules = [
 	# Text
 	{ mime = "text/*", use = [ "edit", "reveal" ] },
 	# Image
-	{ mime = "image/*", use = [ "open", "reveal" ] },
+	{ mime = "image/*", use = [ "open_image", "reveal" ] },
 	# Media
 	{ mime = "{audio,video}/*", use = [ "play", "reveal" ] },
 	# Archive
@@ -75,6 +81,8 @@ rules = [
 	{ mime = "*/javascript", use = [ "edit", "reveal" ] },
 	# Empty file
 	{ mime = "inode/empty", use = [ "edit", "reveal" ] },
+    # PDF
+    { mime = "application/pdf", use = ["open_pdf", "reveal"] },
 	# Fallback
 	{ name = "*", use = [ "open", "reveal" ] },
 ]
