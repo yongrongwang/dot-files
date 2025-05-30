@@ -13,16 +13,36 @@ return {
     end,
   },
 
-  -- test new blink
-  -- { import = "nvchad.blink.lazyspec" },
+  {
+    "nvim-treesitter/nvim-treesitter",
+    opts = {
+      ensure_installed = {
+        "vim", "lua", "vimdoc", "html", "css", "markdown",
+        "typescript", "javascript", "bash"
+      },
+      indent = { enable = false },
+    },
+  },
 
-  -- {
-  -- 	"nvim-treesitter/nvim-treesitter",
-  -- 	opts = {
-  -- 		ensure_installed = {
-  -- 			"vim", "lua", "vimdoc",
-  --      "html", "css"
-  -- 		},
-  -- 	},
-  -- },
+  {
+    "nvim-telescope/telescope.nvim",
+    dependencies = { "nvim-telescope/telescope-live-grep-args.nvim" },
+    opts = {
+      defaults = {
+        layout_config = {
+          width = 0.99,
+          height = 0.99,
+        },
+      },
+    },
+  },
+
+  {
+    "nvim-tree/nvim-tree.lua",
+    opts = {
+      view = {
+        adaptive_size = true,
+      },
+    },
+  },
 }

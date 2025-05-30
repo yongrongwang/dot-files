@@ -15,13 +15,18 @@ set $up k
 set $right l
 # Your preferred terminal emulator
 set $term foot
+# Your preferred browser
+set $browser firefox
 # Your preferred application launcher
-set $menu wmenu-run
+set $arg -i -H 20 --fb "#282828" --ff "#ebdbb2" --nb "#282828" --nf "#ebdbb2" --tb "#282828" --hb "#282828" --tf "#fb4934" --hf "#fabd2f" --nf "#ebdbb2" --af "#ebdbb2" --ab "#282828"
+set $menu bemenu-run $arg
+set $jmenu j4-dmenu-desktop --dmenu='bemenu $arg' --term='foot'
+set $cmenu cliphist list | bemenu $arg | cliphist decode | wl-copy
 
 ### Output configuration
 #
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
-output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
+output * bg ~/.local/share/wallpapers/1.png fill
 #
 # Example configuration:
 #
@@ -33,10 +38,10 @@ output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
 #
 # Example configuration:
 #
-# exec swayidle -w \
-#          timeout 300 'swaylock -f -c 000000' \
-#          timeout 600 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' \
-#          before-sleep 'swaylock -f -c 000000'
+exec swayidle -w \
+         timeout 600 'swaylock -f -c 000000' \
+         timeout 900 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' \
+         before-sleep 'swaylock -f -c 000000'
 #
 # This will lock your screen after 300 seconds of inactivity, then turn off
 # your displays after another 300 seconds, and turn your screens back on when
@@ -46,12 +51,21 @@ output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
 #
 # Example configuration:
 #
-#   input "2:14:SynPS/2_Synaptics_TouchPad" {
-#       dwt enabled
-#       tap enabled
-#       natural_scroll enabled
-#       middle_emulation enabled
-#   }
+    input type:touchpad {
+        dwt enabled
+        tap enabled
+        natural_scroll enabled
+        middle_emulation enabled
+        click_method clickfinger
+    }
+    bindgesture swipe:right workspace prev
+    bindgesture swipe:left workspace next
+
+    input type:keyboard {
+        xkb_options caps:swapescape,ctrl:swap_lalt_lctl_lwin
+        repeat_delay 200
+        repeat_rate 50
+    }
 #
 # You can get the names of your inputs by running: swaymsg -t get_inputs
 # Read `man 5 sway-input` for more information about this section.
@@ -61,13 +75,19 @@ output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
 # Basics:
 #
     # Start a terminal
-    bindsym $mod+Return exec $term
+    bindsym $mod+t exec $term
+    # Start a browser
+    bindsym $mod+b exec $browser
 
     # Kill focused window
     bindsym $mod+Shift+q kill
 
     # Start your launcher
-    bindsym $mod+d exec $menu
+    bindsym $mod+Shift+Return exec pkill bemenu-run || $menu
+    bindsym $mod+Return exec pkill bemenu || $jmenu
+    bindsym $mod+ctrl+Return exec pkill bemenu || $cmenu
+    # Lock screen
+    bindsym $mod+Ctrl+l exec swaylock -f -c 000000
 
     # Drag floating windows by holding down $mod and left mouse button.
     # Resize them with right mouse button + $mod.
@@ -80,7 +100,7 @@ output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
     bindsym $mod+Shift+c reload
 
     # Exit sway (logs you out of your Wayland session)
-    bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
+    bindsym $mod+Shift+e exec swaymsg exit
 #
 # Moving around:
 #
@@ -136,18 +156,18 @@ output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
 # Layout stuff:
 #
     # You can "split" the current object of your focus with
-    # $mod+b or $mod+v, for horizontal and vertical splits
+    # $mod+s or $mod+v, for horizontal and vertical splits
     # respectively.
-    bindsym $mod+b splith
+    bindsym $mod+s splith
     bindsym $mod+v splitv
 
     # Switch the current container between different layout styles
-    bindsym $mod+s layout stacking
-    bindsym $mod+w layout tabbed
-    bindsym $mod+e layout toggle split
+    bindsym $mod+Shift+v layout stacking
+    bindsym $mod+Shift+t layout tabbed
+    bindsym $mod+Shift+s layout toggle split
 
     # Make the current focus fullscreen
-    bindsym $mod+f fullscreen
+    bindsym $mod+Shift+f fullscreen
 
     # Toggle the current focus between tiling and floating mode
     bindsym $mod+Shift+space floating toggle
@@ -156,7 +176,7 @@ output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
     bindsym $mod+space focus mode_toggle
 
     # Move focus to the parent container
-    bindsym $mod+a focus parent
+    bindsym $mod+p focus parent
 #
 # Scratchpad:
 #
@@ -196,33 +216,52 @@ bindsym $mod+r mode "resize"
 #
 # Utilities:
 #
-    # Special keys to adjust volume via PulseAudio
-    bindsym --locked XF86AudioMute exec pactl set-sink-mute \@DEFAULT_SINK@ toggle
-    bindsym --locked XF86AudioLowerVolume exec pactl set-sink-volume \@DEFAULT_SINK@ -5%
-    bindsym --locked XF86AudioRaiseVolume exec pactl set-sink-volume \@DEFAULT_SINK@ +5%
-    bindsym --locked XF86AudioMicMute exec pactl set-source-mute \@DEFAULT_SOURCE@ toggle
+    # Special keys to adjust volume via pipewire
+    bindsym --locked XF86AudioMute exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && ~/.config/sway/volume.sh
+    bindsym --locked XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%- -l 1 && ~/.config/sway/volume.sh
+    bindsym --locked XF86AudioRaiseVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ -l 1 && ~/.config/sway/volume.sh
     # Special keys to adjust brightness via brightnessctl
-    bindsym --locked XF86MonBrightnessDown exec brightnessctl set 5%-
-    bindsym --locked XF86MonBrightnessUp exec brightnessctl set 5%+
+    bindsym --locked XF86MonBrightnessDown exec brightnessctl set 5%- && ~/.config/sway/brightness.sh
+    bindsym --locked XF86MonBrightnessUp exec brightnessctl set 5%+ && ~/.config/sway/brightness.sh
+    # Special keys to adjust player via playerctl
+    bindsym --locked XF86AudioPlay exec playerctl play-pause
     # Special key to take a screenshot with grim
-    bindsym Print exec grim
+    bindsym Print exec grim -g "$(slurp)"
 
 #
 # Status Bar:
 #
 # Read `man 5 sway-bar` for more information about this section.
 bar {
+    font pango:Noto Sans 10
     position top
+    height 20
 
     # When the status_command prints a new line to stdout, swaybar updates.
     # The default just shows the current date and time.
-    status_command while date +'%Y-%m-%d %X'; do sleep 1; done
+    status_command while ~/.config/sway/status.sh; do sleep 1; done
+
+    tray {
+        tray_output none
+    }
 
     colors {
         statusline #ffffff
         background #323232
-        inactive_workspace #32323200 #32323200 #5c5c5c
+        focused_workspace #101010 #202020 #ffffff
     }
 }
+
+font pango:Noto Sans 0.001
+titlebar_border_thickness 0
+titlebar_padding 0
+default_border pixel 1
+default_floating_border pixel 1
+client.focused #101010 #202020 #ffffff #101010 #202020
+
+exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+exec wl-paste --watch cliphist store
+exec fcitx5
+exec foot
 
 include /etc/sway/config.d/*
