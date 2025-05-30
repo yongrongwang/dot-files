@@ -1,0 +1,19 @@
+:root {
+    --tab-min-height: 0 !important;
+    --urlbar-min-height: 0 !important;
+    --toolbarbutton-inner-padding: 0 !important;
+    --arrowpanel-menuitem-padding: 0 !important;
+}
+
+#nav-bar,
+#TabsToolbar-customization-target {
+    height: 27px;
+}
+
+findbar {
+    padding: 0 !important;
+}
+
+hbox [anonid="findbar-textbox-wrapper"] {
+    height: 20px;
+}

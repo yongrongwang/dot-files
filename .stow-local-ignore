@@ -1,0 +1,9 @@
+\.git
+\.gitignore
+\.mozilla
+
+^/README.*
+^/LICENSE.*
+
+etc
+scripts

@@ -1,4 +1,4 @@
-vim.g.base46_cache = vim.fn.stdpath "data" .. "/base46/"
+vim.g.base46_cache = vim.fn.stdpath "data" .. "/nvchad/base46/"
 vim.g.mapleader = " "
 
 -- bootstrap lazy and all plugins
@@ -35,3 +35,16 @@ require "autocmds"
 vim.schedule(function()
   require "mappings"
 end)
+
+vim.diagnostic.enable(false)
+
+vim.api.nvim_create_autocmd('BufDelete', {
+  callback = function (ev)
+    clients = vim.lsp.get_clients()
+    for _, client in ipairs(clients) do
+      if next(client.attached_buffers) == nil then
+        vim.lsp.stop_client(client.id, true)
+      end
+    end
+  end
+})
