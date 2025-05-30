@@ -6,19 +6,37 @@
 local M = {}
 
 M.base46 = {
-	theme = "onedark",
-
-	-- hl_override = {
-	-- 	Comment = { italic = true },
-	-- 	["@comment"] = { italic = true },
-	-- },
+  theme = "monekai",
 }
 
--- M.nvdash = { load_on_startup = true }
--- M.ui = {
---       tabufline = {
---          lazyload = false
---      }
---}
+M.ui = {
+  tabufline = {
+    lazyload = false,
+    order = { "buffers" },
+  },
+
+  statusline = {
+    theme = "vscode_colored",
+  },
+}
+
+M.term = {
+  sizes = { sp = 0.5, vsp = 0.5 },
+  float = {
+    relative = "editor",
+    row = 1,
+    col = 1,
+    width = 1,
+    height = 1,
+    border = "none",
+  },
+}
+
+M.mason = {
+  pkgs = {
+    "lua-language-server", "html-lsp", "css-lsp", "marksman",
+    "typescript-language-server", "bash-language-server"
+  }
+}
 
 return M
