@@ -1,0 +1,10 @@
+[user]
+	name = yongrongwang
+	email = 2278508989@qq.com
+[core]
+	pager = diff-so-fancy | less --tabs=4 -RF
+[interactive]
+	diffFilter = diff-so-fancy --patch
+[diff-so-fancy]
+	markEmptyLines = false
+	changeHunkIndicators = false
