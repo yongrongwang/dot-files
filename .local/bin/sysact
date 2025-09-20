@@ -1,0 +1,8 @@
+#!/bin/sh
+
+case "$(printf "kill dwm\nreboot\nshutdown\n" | dmenu -i -p 'Power' -l 3)" in
+	"kill dwm") pkill dwm ;;
+	"reboot") sudo reboot ;;
+	"shutdown") sudo poweroff ;;
+	*) exit 1 ;;
+esac
